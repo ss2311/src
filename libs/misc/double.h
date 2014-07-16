@@ -107,6 +107,10 @@ public:
     Double operator-(const Double& rhs_) const { return Double(m_value - rhs_.m_value, true); }
     Double operator*(const Double& rhs_) const { return Double(m_value * rhs_.m_value, true); }
     Double operator/(const Double& rhs_) const { return Double(m_value / rhs_.m_value, true); }
+
+	// pretty printing
+	friend std::ostream& operator<<(std::ostream& oss_, Double val_)
+	{ return oss_ << val_.m_value; }
     
     // Getters
     unsigned getDecimalPlaces() const { return Decimals; }

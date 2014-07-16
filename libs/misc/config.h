@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <string>
 #include <fstream>
+#include <vector>
 #include <misc/exception.h>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
@@ -76,6 +77,19 @@ struct Config : public std::unordered_map<std::string, std::string>
     bool addKeyValue(const std::string& key_, const T& val_)
     {
         return emplace(key_, boost::lexical_cast<std::string>(val_)).second;
+    }
+    
+    std::vector<std::string> getVector(const std::string& key_)
+    {
+        std::istringstream iss(getValue(key_,std::string()));
+        std::string str;
+        std::vector<std::string> vec;
+        while(iss)
+        {
+            iss >> str;
+            vec.push_back(str);
+        }
+        return vec;
     }
 };
 } // namespace tools

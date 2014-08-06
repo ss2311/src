@@ -9,7 +9,7 @@ using namespace fx;
 
 BOOST_AUTO_TEST_CASE(testTS1)
 {
-	TimeSeries ts1(4);
+	TimeSeries<> ts1(4);
 	ts1.insert(1.2559);
 	ts1.insert(1.2560);
 	ts1.insert(1.2561);

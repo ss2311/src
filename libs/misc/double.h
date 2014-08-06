@@ -9,7 +9,7 @@ namespace tools {
 template<typename T>
 inline constexpr T power(T num_, unsigned exp_)
 {
-    return exp_ == 0 ? 1 : num_ * pow(num_, exp_ - 1);
+    return exp_ == 0 ? 1 : num_ * power(num_, exp_ - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ public:
 
 	// pretty printing
 	friend std::ostream& operator<<(std::ostream& oss_, Double val_)
-	{ return oss_ << val_.m_value; }
+	{ return oss_ << static_cast<double>(val_.m_value) / val_.getScalingFactor(); }
     
     // Getters
     unsigned getDecimalPlaces() const { return Decimals; }

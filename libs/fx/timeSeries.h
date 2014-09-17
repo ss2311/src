@@ -17,32 +17,10 @@ struct TsData
 };
 
 
-/*
-template<typename Type, unsigned Num>
-class TsBuffer : public std::array<Type, Num>
-{
-public:
-	TsBuffer() : m_begin(0), m_end(0)
-	{}
-	void push_back(const Type& data_)
-	{
-		this->at(m_end) = data_;
-		m_end = (m_end + 1) % Num;
-
-		if(m_end == m_begin)
-			m_begin = (m_begin + 1 ) % Num;
-	}
-	unsigned begin() const { return m_begin; }
-	unsigned end()   const { return m_end; }
-private:
-	unsigned m_begin;
-	unsigned m_end;
-};
-*/
 
 //////////////////////////////////////////////////////////////////////////
 template<unsigned Num = 2000>
-class TimeSeries : public tools::CircularBuffer<TsData, Num>
+class TimeSeries : public tools::CircularQueue<TsData, Num>
 {
 public:
 
@@ -76,7 +54,7 @@ private:
 #if 0
 //////////////////////////////////////////////////////////////////////////
 //template<unsigned Num = 2000>
-class TimeSeries : /*public tools::CircularBuffer<Price, Num>*/  public std::deque<TsData>
+class TimeSeries : /*public tools::CircularQueue<Price, Num>*/  public std::deque<TsData>
 {
 public:
 

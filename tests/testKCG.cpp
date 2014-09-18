@@ -11,6 +11,7 @@
 
 using namespace std;
 
+
 //////////////////////////////////////////////////////////////////////
 // Yes the author on purpose did not check for 'U' or lower case letters
 inline bool isVowel(char ch_)  
@@ -26,12 +27,21 @@ struct Location
 	unsigned m_col;
 
 	Location(unsigned row_, unsigned col_) : m_row(row_), m_col(col_) {}
+	string toString() const 
+	{
+		ostringstream oss;
+		oss << *this;
+		return oss.str();
+	}
+	friend ostream& operator << (ostream& os_, const Location& loc_)
+	{ return os_ << '[' << loc_.m_row << ',' << loc_.m_col << ']' << endl; }
 	friend bool operator==(const Location& lhs_, const Location& rhs_)
 	{
 		return (lhs_.m_row == rhs_.m_row) && (lhs_.m_col == rhs_.m_col);
 	}
 	static const char INVALID = '*';
 };
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -76,6 +86,22 @@ private:
 	char m_array[NUMROWS][NUMCOLS];
 };
 
+struct LocationInfo
+{
+	Location m_loc;
+	char m_value;
+	bool m_isVowel;
+
+	LocationInfo(const Board& board_, const Location& loc_) :
+		m_loc(loc_),
+		m_value(board_.at(m_loc)),
+		m_isVowel(isVowel(m_value))
+	{
+	}
+	friend ostream& operator << (ostream& os_, const LocationInfo& val_)
+	{ return os_ << val_.m_loc << "=>" << val_.m_value; } 
+};
+
 //////////////////////////////////////////////////////////////////////
 // C++ representation of Knight
 class Knight
@@ -94,7 +120,7 @@ public:
 		if(Location::INVALID != ch)
 		{
 			if(isVowel(ch) && m_vowelCount >= m_vowelCountMAX)
-				return false;
+/				return false;
 			return true;
 		}
 		return false;
@@ -103,34 +129,50 @@ public:
 	// returns deque of moves that can be made from current location
 	deque<Location> possibleMoves() const
 	{
-		char ch = m_board.at(location());
 		/*
-		static deque<Location> deqs[256]; // TODO 256 ???
+		static deque<Location> deqs[128];
+		char ch = m_board.at(location());
 		auto& deq = deqs[static_cast<unsigned>(ch)];
 		if(false == deq.empty())
 			return deq;
 		*/
 		deque<Location> deq;
+		Location loc(0,0);
 
 		// 2 steps horizontally and 1 step vertically
-		if(isValidLocation(moveLeftUp()))
-			deq.push_back(moveLeftUp());
-		if(isValidLocation(moveLeftDn()))
-			deq.push_back(moveLeftDn());
-		if(isValidLocation(moveRightUp()))
-			deq.push_back(moveRightUp());
-		if(isValidLocation(moveRightDn()))
-			deq.push_back(moveRightDn());
+		loc = moveLeftUp();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveLeftDn();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveRightUp();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveRightDn();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
 
 		// 2 steps vertically and 1 step horizontally
-		if(isValidLocation(moveUpLeft()))
-			deq.push_back(moveUpLeft());
-		if(isValidLocation(moveUpRight()))
-			deq.push_back(moveUpRight());
-		if(isValidLocation(moveDnLeft()))
-			deq.push_back(moveDnLeft());
-		if(isValidLocation(moveDnRight()))
-			deq.push_back(moveDnRight());
+
+		loc = moveUpLeft();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveUpRight();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveDnLeft();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
+
+		loc = moveDnRight();
+		if(isValidLocation(loc))
+			deq.push_back(loc);
 
 		/*
 		cout << ch << " => ";
@@ -152,7 +194,7 @@ public:
 	{
 		cout << "Knight: ";
 		for(auto loc : m_moves)
-			cout << m_board.at(loc) << " ";
+			cout << loc.m_value << " ";
 		cout << endl;
 	}
 
@@ -160,28 +202,21 @@ public:
 	void moveBack()
 	{
 		// if the square that we back tracked from was a vowel then decr the count
-		if(isVowel(m_board.at(m_moves.back())))
+		if(m_moves.back().m_isVowel)
 			m_vowelCount--; 
 		m_moves.pop_back();
 	}
 	
-	// move to location 'loc_'
-	void moveTo(const Location& loc_)
+	// move to new location 
+	void moveTo(const LocationInfo& locInfo_)
 	{
-		if(false == isValidLocation(loc_))
-			throw runtime_error("Invalid location");
-
-		m_moves.push_back(loc_);
-		char ch = m_board.at(loc_);
-		if(isVowel(ch))
+		m_moves.push_back(locInfo_);
+		if(locInfo_.m_isVowel)
 			m_vowelCount++;
-
-		if( m_vowelCount > m_vowelCountMAX)
-			throw runtime_error("vowelCount: " + to_string(m_vowelCount) + " > " + to_string(m_vowelCountMAX));
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	const Location& location() const { return m_moves.back(); }
+	const Location& location() const { return m_moves.back().m_loc; }
 private:
 
 	//////////////////////////////////////////////////////
@@ -216,7 +251,7 @@ private:
 	const Board& m_board;	// Board on which this Knight is on
 	unsigned m_vowelCount;	// number of vowels seen so far
 	unsigned m_vowelCountMAX;
-	deque<Location> m_moves;	// moves this knight has made so far
+	deque<LocationInfo> m_moves;	// moves this knight has made so far
 };
 
 
@@ -232,14 +267,15 @@ public:
 		m_numSequences(0)	
 	{}
 	
+	//////////////////////////////////////////////////////////////////////
 	void move(Knight& knight_)
 	{
 		while(false == m_moves.empty())
 		{
 			Location newLoc = m_moves.back();
-			if(knight_.isValidLocation(newLoc))
+			LocationInfo locInfo(m_board, newLoc);
 			{
-				knight_.moveTo(newLoc);
+				knight_.moveTo(locInfo);
 				if(knight_.getMoveCount() >= m_maxMoves) // TODO  move count++ inside knight
 				{
 					//printMoves(); //:-- for debugging only
@@ -258,8 +294,6 @@ public:
 				for(auto& loc : knight_.possibleMoves())
 					m_moves.push_back(loc);
 			}
-			else
-				m_moves.pop_back();
 		}
 	}
 
@@ -270,6 +304,7 @@ public:
 			cout << m_board.at(loc) << " ";
 		cout << endl;
 	}
+
 	// prints all the moves made so far
 	void printMoves() const
 	{
@@ -280,17 +315,21 @@ public:
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	void startFrom(const Location& loc_)
+	{
+		if(false == m_board.isValidLocation(loc_))
+			return;
+		Knight knight(m_board, m_maxVowels); 
+		m_moves.push_back(loc_);
+		move(knight);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	void run()
 	{
 		for(unsigned r = 0; r < m_board.getNumRows(); ++r)
-		{
 			for(unsigned c = 0; c < m_board.getNumCols(); ++c)
-			{
-				Knight knight(m_board, m_maxVowels); 
-				m_moves.push_back(Location(r,c));
-				move(knight);
-			}
-		}
+				startFrom(Location(r,c));
 		cout << m_numSequences << endl;
 	}
 	
@@ -301,6 +340,42 @@ private:
 	const unsigned m_maxVowels;	// max num of vowels allowed
 	deque<Location> m_moves;	// stack for DFS
 	unsigned m_numSequences;	// num sequences
+};
+
+/////////////////////////////////////////////////////////////////////////////
+struct PosInfo
+{
+	char m_char;
+	bool m_isVowel;
+	const char* m_moves;
+};
+
+//////////////////////////////////////////////////////////////////////
+struct PosMgr
+{
+	PosInfo	m_posInfo[128];
+
+	PosMgr()
+	{
+		m_posInfo['1'] = { '1', false, "NFH"};
+		m_posInfo['2'] = { '2', false, "KOGI"};
+		m_posInfo['3'] = { '3', false, "LHJ"};
+		m_posInfo['A'] = { 'A', true, "HL"};
+		m_posInfo['B'] = { 'B', false, "IKM"};
+		m_posInfo['C'] = { 'C', false, "FJLN"};
+		m_posInfo['D'] = { 'D', false, "GMO"};
+		m_posInfo['E'] = { 'E', true, "HN"};
+		m_posInfo['F'] = { 'F', false, "CM1"};
+		m_posInfo['G'] = { 'G', false, "DN2"};
+		m_posInfo['H'] = { 'H', false, "AKEO13"};
+		m_posInfo['I'] = { 'I', true, "BL2"};
+		m_posInfo['J'] = { 'J', false, "CM3"};
+		m_posInfo['K'] = { 'K', false, "H2B"};
+		m_posInfo['L'] = { 'L', false, "I3AC"};
+		m_posInfo['M'] = { 'M', false, "FJBD"};
+		m_posInfo['N'] = { 'N', false, "G1CE"};
+		m_posInfo['O'] = { 'O', true, "H2D"};
+	}
 };
 
 //////////////////////////////////////////////////////////////////////

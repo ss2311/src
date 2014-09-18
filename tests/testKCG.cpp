@@ -120,7 +120,7 @@ public:
 		if(Location::INVALID != ch)
 		{
 			if(isVowel(ch) && m_vowelCount >= m_vowelCountMAX)
-/				return false;
+				return false;
 			return true;
 		}
 		return false;

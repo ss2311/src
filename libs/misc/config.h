@@ -30,7 +30,7 @@ struct Config : public std::unordered_map<std::string, std::string>
         
         std::fstream fs(filename_);
         if(false == fs.is_open())
-            THROW("Unable to open filename="<<filename_);
+            throw EXCEPTION("Unable to open filename="<<filename_);
         readFile(fs);
     }
     
@@ -51,14 +51,14 @@ struct Config : public std::unordered_map<std::string, std::string>
             
             unsigned pos = line.find('=');
             if(pos > line.length())
-                THROW("Key Value delimiter not found");
+                throw EXCEPTION("Key Value delimiter not found");
             std::string key = line.substr(0, pos);
             std::string val = line.substr(pos+1);
             boost::trim(key);
             boost::trim(val);
             
             if(false == addKeyValue(key, val))
-                THROW("Invalid/Duplicate key");
+                throw EXCEPTION("Invalid/Duplicate key");
         }
     }
     

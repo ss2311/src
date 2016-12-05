@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(test_exception)
     unsigned id = 589;
     try {
 //        throw Exception("xyz", __FILENAME__, __LINE__);
-        THROW("name:" << name << ", id:" << id << " dbl:" << 123.456);
+        throw EXCEPTION("name:" << name << ", id:" << id << " dbl:" << 123.456);
     } catch (const Exception& err_) {
         log.logERR(err_.what());
         log.logERR(err_);

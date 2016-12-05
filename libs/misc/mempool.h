@@ -33,7 +33,7 @@ public:
 
 	MemPool()
 	{
-		for(int i = 0; i < Num; i++)
+		for(unsigned i = 0; i < Num; i++)
 		{
 			this->at(i).nextIdx = i + 1;
 			this->at(i).selfIdx = i;
@@ -44,7 +44,7 @@ public:
 	Type& alloc()
 	{
 		if(m_headFree == INVALID_IDX)
-			THROW("Out of Memory");
+			throw EXCEPTION("Out of Memory");
 
 		auto& blk = this->at(m_headFree);
 		m_headFree = blk.nextIdx;

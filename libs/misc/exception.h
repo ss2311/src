@@ -14,6 +14,3 @@ struct Exception : public std::runtime_error
 
 #define EXCEPTION(x) Exception(std::ostringstream() << "Exception: " << x << " (" << __FILENAME__ << ',' << __LINE__ << ')')
 
-#define THROW(x) throw Exception(std::ostringstream() << "Exception: " << x << " (" << __FILENAME__ << ',' << __LINE__ << ')')
-
-

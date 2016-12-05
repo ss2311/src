@@ -12,46 +12,6 @@ inline constexpr T power(T num_, unsigned exp_)
     return exp_ == 0 ? 1 : num_ * power(num_, exp_ - 1);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-////
-//double ceil(double val_, unsigned dp_)
-//{
-//    val_ *= power(10, dp_);
-//    val_ = std::ceil(val_);
-//    val_ /= power(10, dp_);
-//    return val_;
-//}
-//
-/////////////////////////////////////////////////////////////////////////////////
-////
-//double floor(double val_, unsigned dp_)
-//{
-//    val_ *= power(10, dp_);
-//    val_ = std::floor(val_);
-//    val_ /= power(10, dp_);
-//    return val_;
-//}
-//
-/////////////////////////////////////////////////////////////////////////////////
-////
-//double round(double val_, unsigned dp_)
-//{
-//    val_ *= power(10, dp_);
-//    val_ = std::round(val_);
-//    val_ /= power(10, dp_);
-//    return val_;
-//}
-//
-/////////////////////////////////////////////////////////////////////////////////
-////
-//double trunc(double val_, unsigned dp_)
-//{
-//    val_ *= power(10, dp_);
-//    val_ = std::trunc(val_);
-//    val_ /= power(10, dp_);
-//    return val_;
-//}
-
 enum class RoundType
 {
     Round,  // rounds to closest value +/-1.5 => +/-2.0, +/-1.4 => +/-1.0

@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 #include <logger/logger.h>
-#include <misc/config.h>
+#include <config/config.h>
 
 using namespace std;
 using namespace logger;

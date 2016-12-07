@@ -1,0 +1,11 @@
+
+GCC & GDB
+http://www-scf.usc.edu/~csci104/20142/installation/gccmac.html
+https://solarianprogrammer.com/2016/09/22/compiling-gcc-6-macos/
+
+BOOST
+https://solarianprogrammer.com/2016/03/06/compiling-boost-gcc-5-clang-mac-os-x/
+http://qiita.com/misho/items/0c0b3ca25bb8f62aa681
+
+Visual Code   
+https://blogs.msdn.microsoft.com/vcblog/2016/03/31/cc-extension-for-visual-studio-code/ 

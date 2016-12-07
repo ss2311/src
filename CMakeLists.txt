@@ -1,6 +1,10 @@
 ####
 cmake_minimum_required(VERSION 2.8)
 
+## To make cmake use custom GCC on MAC OSX
+set(CMAKE_CXX_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/g++-5)
+set(CMAKE_C_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/gcc-5)
+
 project(SS)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O0 -pg -g -std=c++11 -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")

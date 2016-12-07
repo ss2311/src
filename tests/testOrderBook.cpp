@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <misc/orderbook.h>
+#include <feeds/orderbook.h>
 #include <iostream>
 
 using namespace std;
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(test_price_neg)
 
 BOOST_AUTO_TEST_CASE(test_ob_basic)
 {
-    OrderBookBuilder obb;
+    OrderBookBuilder obb(1);
     obb.addLevel(Price(45.98), Size(10), OrderBook::Side::BID);
     obb.addLevel(45.68, Size(10), OrderBook::Side::BID);
     obb.addLevel(45.88, Size(10), OrderBook::Side::BID);
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(test_ob_basic)
 
 BOOST_AUTO_TEST_CASE(test_ob_add_del)
 {
-    OrderBookBuilder obb;
+    OrderBookBuilder obb(1);
     {
     obb.addLevel(45.68, 10, OrderBook::Side::BID);
     OrderBook ob = obb.getOrderBook();

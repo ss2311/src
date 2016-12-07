@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 
 # where all includes are
 include_directories(${SS_SOURCE_DIR}/libs)
+include_directories(SYSTEM /usr/local/include)
 
 # where all libraries are
 link_directories(${SS_BINARY_DIR}/libs)
+link_directories(/usr/local/lib)
 
 #BOOST libs
 set(libs_boost boost_chrono boost_system boost_program_options boost_unit_test_framework boost_regex)	

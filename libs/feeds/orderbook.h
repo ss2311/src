@@ -19,6 +19,7 @@ inline constexpr T power(T num_, unsigned exp_)
 class Instrument {
 public:
     using Id = uint32_t;
+    static const Id INVALID_ID = 0;
 private:
     Id m_id;
     const char* m_name; 
@@ -58,22 +59,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////
-class Position {
-public:
-    enum  Side {
-        LONG = 1,
-        SHORT = -1,
-        BUY = LONG,
-        SELL = SHORT,
-    };
-    Position(Size sz_, Side side_) : m_value(sz_ * side_) { }
-    Position(int32_t sz_) : m_value(sz_) { }
-    operator int32_t () const { return m_value; }
-private:
-    int32_t m_value; 
-};
-
-///////////////////////////////////////////////////////////////
 // Plain old data struct so that it can be sent on wire or put in shared mem etc
 struct OrderBook {
     enum class Side : char {
@@ -81,7 +66,8 @@ struct OrderBook {
         ASK = 'A'
     };
     static const unsigned MAX_LEVELS = 10;
-
+    
+    Instrument::Id m_instrumentId;
     uint16_t m_numBids;
     uint16_t m_numAsks;
     Price m_bidPx[MAX_LEVELS]; 
@@ -89,8 +75,11 @@ struct OrderBook {
     Price m_askPx[MAX_LEVELS]; 
     Size  m_askSz[MAX_LEVELS];
 
+    OrderBook(Instrument::Id id_) : m_instrumentId(id_), m_numBids(0), m_numAsks(0) { }
+
     // pretty printing
 	friend std::ostream& operator<<(std::ostream& oss_, const OrderBook& ob_) {
+        oss_ << "OrderBook for InstrumentId: " << ob_.m_instrumentId << std::endl;
         oss_ << std::fixed;
         oss_.precision(Price::PRECISION);
         for(unsigned i = 0; i < MAX_LEVELS; ++i) {
@@ -108,6 +97,8 @@ struct OrderBook {
 ///////////////////////////////////////////////////////////////
 class OrderBookBuilder {
 public:
+    OrderBookBuilder(Instrument::Id id_) : m_instrumentId(id_) { }
+
     void addLevel(Price px_, Size sz_, OrderBook::Side side_) {
         if(side_ == OrderBook::Side::BID)
             addLevel(bidBook, px_, sz_);
@@ -130,7 +121,7 @@ public:
     }
 
     OrderBook getOrderBook() {
-        OrderBook ob;
+        OrderBook ob(m_instrumentId);
         unsigned i = 0;
         for(auto it = bidBook.begin(); it != bidBook.end() && i < OrderBook::MAX_LEVELS; ++it, ++i ) {
             ob.m_bidPx[i] = it->first;
@@ -165,7 +156,7 @@ private:
                 book_.erase(it); 
         }
     }
-
+    Instrument::Id m_instrumentId;
     // since we add/subtract sizes, so using signed int vs unsigned Size
     std::map<Price, int32_t, std::greater<Price>> bidBook; // best bid => highest bid 
     std::map<Price, int32_t> askBook; // best ask => lowest ask

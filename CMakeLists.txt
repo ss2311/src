@@ -15,7 +15,7 @@ add_subdirectory(tests)
 # UTs	
 #enable_testing()
 #add_test(mytest tests/test1 ${ARGS})
-
+#$ make ut ARGS="--run_test=test_perf"
 add_custom_target(ut 
 		COMMAND ${SS_BINARY_DIR}/tests/test1 \${ARGS}
 		DEPENDS test1

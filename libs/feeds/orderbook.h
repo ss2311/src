@@ -34,6 +34,7 @@ public:
     static constexpr double NAN_PX = std::nan(""); 
 
     Price(double px_) : m_value(scalePx(px_)) { }
+    Price(int) = delete;    
     Price(const Price& px_) : m_value(px_.m_value) { }
     Price() : m_value(BAD_PX) { }
     operator int64_t() const { return m_value; }
@@ -46,13 +47,13 @@ private:
         return static_cast<int64_t>((px * MULTIPLER) + delta); 
     }
 
-    int64_t m_value;
+    int64_t m_value = BAD_PX;
 };
 
 ///////////////////////////////////////////////////////////////
-class Size {
+class Quantity {
 public:
-    Size(unsigned sz_ = 0) : m_value(sz_) {}
+    Quantity(unsigned sz_ = 0) : m_value(sz_) {}
     operator uint32_t() const { return m_value; }
 private:
     uint32_t m_value;
@@ -71,9 +72,9 @@ struct OrderBook {
     uint16_t m_numBids;
     uint16_t m_numAsks;
     Price m_bidPx[MAX_LEVELS]; 
-    Size  m_bidSz[MAX_LEVELS];
+    Quantity m_bidQty[MAX_LEVELS];
     Price m_askPx[MAX_LEVELS]; 
-    Size  m_askSz[MAX_LEVELS];
+    Quantity m_askSz[MAX_LEVELS];
 
     OrderBook(Instrument::Id id_) : m_instrumentId(id_), m_numBids(0), m_numAsks(0) { }
 
@@ -85,7 +86,7 @@ struct OrderBook {
         for(unsigned i = 0; i < MAX_LEVELS; ++i) {
             //oss_ << i << " ";
             if(i < ob_.m_numBids)
-                oss_ << std::left << ob_.m_bidPx[i].asDouble() << " x " << std::setw(10) << ob_.m_bidSz[i]; 
+                oss_ << std::left << ob_.m_bidPx[i].asDouble() << " x " << std::setw(10) << ob_.m_bidQty[i]; 
             if(i < ob_.m_numAsks)
                 oss_ << ob_.m_askPx[i].asDouble() << " x " << ob_.m_askSz[i]; 
             oss_ << std::endl;
@@ -99,22 +100,22 @@ class OrderBookBuilder {
 public:
     OrderBookBuilder(Instrument::Id id_) : m_instrumentId(id_) { }
 
-    void addLevel(Price px_, Size sz_, OrderBook::Side side_) {
+    void addLevel(Price px_, Quantity sz_, OrderBook::Side side_) {
         if(side_ == OrderBook::Side::BID)
             addLevel(bidBook, px_, sz_);
         else
             addLevel(askBook, px_, sz_);
     }
     
-    void removeLevel(Price px_, Size sz_, OrderBook::Side side_) {
+    void removeLevel(Price px_, Quantity sz_, OrderBook::Side side_) {
         if(side_ == OrderBook::Side::BID)
             removeLevel(bidBook, px_, sz_);
         else
             removeLevel(askBook, px_, sz_);
     }
     
-    void removeLevel(Price px_, Size sz_ = Size()) {
-        if(bidBook.size() && px_ <= bidBook.begin()->first) // is px <= best bid
+    void removeLevel(Price px_, Quantity sz_ = Quantity()) {
+        if(bidBook.size()  && px_ <= bidBook.begin()->first) // is px <= best bid
             removeLevel(bidBook, px_, sz_);
         else
             removeLevel(askBook, px_, sz_);
@@ -125,7 +126,7 @@ public:
         unsigned i = 0;
         for(auto it = bidBook.begin(); it != bidBook.end() && i < OrderBook::MAX_LEVELS; ++it, ++i ) {
             ob.m_bidPx[i] = it->first;
-            ob.m_bidSz[i] = it->second;
+            ob.m_bidQty[i] = it->second;
         }
         ob.m_numBids = i;
 
@@ -140,7 +141,7 @@ public:
 
 private:
     template<typename Book>
-    void addLevel(Book& book_, Price px_, Size sz_) {
+    void addLevel(Book& book_, Price px_, Quantity sz_) {
         auto ret = book_.emplace(px_, sz_);
         if(false == ret.second) {       // px already exists
             ret.first->second += sz_;   // then update volume
@@ -148,7 +149,7 @@ private:
     }
 
     template<typename Book>
-    void removeLevel(Book& book_, Price px_, Size sz_) {
+    void removeLevel(Book& book_, Price px_, Quantity sz_) {
         auto it = book_.find(px_);
         if(it != book_.end()) {     // px exists
             it->second -= sz_;      // update volume
@@ -157,7 +158,7 @@ private:
         }
     }
     Instrument::Id m_instrumentId;
-    // since we add/subtract sizes, so using signed int vs unsigned Size
+    // since we add/subtract Quantitys, so using signed int vs unsigned Quantity
     std::map<Price, int32_t, std::greater<Price>> bidBook; // best bid => highest bid 
     std::map<Price, int32_t> askBook; // best ask => lowest ask
 };

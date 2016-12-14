@@ -1,6 +1,6 @@
 ####
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.3.2)
 
-file(GLOB LIBSRC "*.cpp" "logger" "misc" "fx")
+file(GLOB_RECURSE LIBSRC "*.cpp" )
 add_library(common SHARED ${LIBSRC})
 

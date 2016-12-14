@@ -1,5 +1,5 @@
 ####
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.3.2)
 
 ## To make cmake use custom GCC on MAC OSX
 set(CMAKE_CXX_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/g++-5)
@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O0 -pg -g -std=
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O3 -std=c++11 -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
 add_subdirectory(libs)
 add_subdirectory(tests)
+add_subdirectory(apps)
 
 # UTs	
 #enable_testing()
@@ -27,3 +28,9 @@ add_custom_target(gdb
 		DEPENDS test1
 #		WORKING_DIRECTORY 
 		COMMENT "Running unit tests inside gdb ...")
+
+add_custom_target(paper 
+		COMMAND ${SS_BINARY_DIR}/apps/trsys \${ARGS}
+		DEPENDS trsys
+#		WORKING_DIRECTORY 
+		COMMENT "Running paper trading ...")

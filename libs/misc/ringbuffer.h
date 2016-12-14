@@ -8,6 +8,7 @@
 // read from head -- pop_front
 // write to tail -- push_back
 // TODO: Make this more efficient using non-consistent memory_ordering
+// https://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular
 template<typename Type, unsigned Num>
 class RingBuffer {
 public:

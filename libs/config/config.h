@@ -38,9 +38,8 @@ struct Config : public std::unordered_map<std::string, std::string>
     void readFile(std::istream& fs_)
     {
         std::string line;
-        while(fs_)
+        while(std::getline(fs_, line))
         {
-            std::getline(fs_, line);
             boost::trim(line);
             
             if(0 == line.length())  // skip empty lines
@@ -58,7 +57,7 @@ struct Config : public std::unordered_map<std::string, std::string>
             boost::trim(val);
             
             if(false == addKeyValue(key, val))
-                throw EXCEPTION("Invalid/Duplicate key");
+                throw EXCEPTION("Invalid/Duplicate key='" << key << "', value='" << val <<"'");
         }
     }
     
@@ -71,7 +70,14 @@ struct Config : public std::unordered_map<std::string, std::string>
             return boost::lexical_cast<T>(it->second);
         return default_;
     }
-    
+
+    std::string getValue(const std::string& key_, const char* default_)
+    {
+        auto it = find(key_);
+        if(it != end())
+            return it->second;
+        return default_;
+    }
     ////////////////////////////////////////////////////////////////////////////
     template<typename T>
     bool addKeyValue(const std::string& key_, const T& val_)

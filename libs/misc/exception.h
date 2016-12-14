@@ -12,5 +12,5 @@ struct Exception : public std::runtime_error
 	{ return os_ << exp_.what(); }
 };
 
-#define EXCEPTION(x) Exception(std::ostringstream() << "Exception: " << x << " (" << __FILENAME__ << ',' << __LINE__ << ')')
+#define EXCEPTION(x) Exception(std::ostringstream() << "Exception: " << x << " (" << __FILE__ << ',' << __LINE__ << ')')
 

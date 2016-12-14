@@ -2,8 +2,11 @@
 cmake_minimum_required(VERSION 3.3.2)
 
 ## To make cmake use custom GCC on MAC OSX
-set(CMAKE_CXX_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/g++-5)
-set(CMAKE_C_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/gcc-5)
+if(APPLE)
+	message(STATUS "Compiling for MacOS")
+	set(CMAKE_CXX_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/g++-5)
+	set(CMAKE_C_COMPILER /usr/local/Cellar/gcc5/5.4.0/bin/gcc-5)
+ENDIF()
 
 project(SS)
 
@@ -30,7 +33,8 @@ add_custom_target(gdb
 		COMMENT "Running unit tests inside gdb ...")
 
 add_custom_target(paper 
-		COMMAND ${SS_BINARY_DIR}/apps/trsys \${ARGS}
+		COMMAND ${CMAKE_COMMAND} -E create_symlink ${SS_SOURCE_DIR}/tests/testData ${SS_BINARY_DIR}/testData
+		COMMAND ${SS_BINARY_DIR}/apps/trsys testData/paper.cfg \${ARGS}
 		DEPENDS trsys
 #		WORKING_DIRECTORY 
-		COMMENT "Running paper trading ...")
+		COMMENT "Running paper trading... ${SS_BINARY_DIR}/apps/trsys testData/paper.cfg")

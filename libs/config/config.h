@@ -70,7 +70,8 @@ struct Config : public std::unordered_map<std::string, std::string>
             return boost::lexical_cast<T>(it->second);
         return default_;
     }
-
+    
+    ////////////////////////////////////////////////////////////////////////////
     std::string getValue(const std::string& key_, const char* default_)
     {
         auto it = find(key_);
@@ -78,6 +79,7 @@ struct Config : public std::unordered_map<std::string, std::string>
             return it->second;
         return default_;
     }
+    
     ////////////////////////////////////////////////////////////////////////////
     template<typename T>
     bool addKeyValue(const std::string& key_, const T& val_)
@@ -85,6 +87,7 @@ struct Config : public std::unordered_map<std::string, std::string>
         return emplace(key_, boost::lexical_cast<std::string>(val_)).second;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     std::vector<std::string> getVector(const std::string& key_)
     {
         std::istringstream iss(getValue(key_,std::string()));

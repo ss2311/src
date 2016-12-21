@@ -15,3 +15,6 @@ file(GLOB TRSYS "tradingsystem/*.cpp")
 add_executable(trsys ${TRSYS})# src files it needs
 target_link_libraries(trsys common ${libs_others} ${libs_boost})		# what libs it needs
 
+file(GLOB BKTST "backtest/*.cpp")
+add_executable(bktst ${BKTST})# src files it needs
+target_link_libraries(bktst common ${libs_others} ${libs_boost})		# what libs it needs

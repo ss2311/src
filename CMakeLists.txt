@@ -43,3 +43,10 @@ add_custom_target(paper
 		DEPENDS trsys
 #		WORKING_DIRECTORY 
 		COMMENT "Running paper trading... ${SS_BINARY_DIR}/apps/trsys testData/paper.cfg")
+
+add_custom_target(bktest 
+		COMMAND ${CMAKE_COMMAND} -E create_symlink ${SS_SOURCE_DIR}/tests/testData ${SS_BINARY_DIR}/testData
+		COMMAND ${SS_BINARY_DIR}/apps/bktst testData/bktest.cfg \${ARGS}
+		DEPENDS bktst
+#		WORKING_DIRECTORY 
+		COMMENT "Running back testing... ${SS_BINARY_DIR}/apps/bktst testData/bktest.cfg")

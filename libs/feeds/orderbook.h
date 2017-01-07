@@ -74,7 +74,7 @@ struct OrderBook {
     Price m_bidPx[MAX_LEVELS]; 
     Quantity m_bidQty[MAX_LEVELS];
     Price m_askPx[MAX_LEVELS]; 
-    Quantity m_askSz[MAX_LEVELS];
+    Quantity m_askQty[MAX_LEVELS];
 
     OrderBook(Instrument::Id id_) : m_instrumentId(id_), m_numBids(0), m_numAsks(0) { }
 
@@ -88,7 +88,7 @@ struct OrderBook {
             if(i < ob_.m_numBids)
                 oss_ << std::left << ob_.m_bidPx[i].asDouble() << " x " << std::setw(10) << ob_.m_bidQty[i]; 
             if(i < ob_.m_numAsks)
-                oss_ << ob_.m_askPx[i].asDouble() << " x " << ob_.m_askSz[i]; 
+                oss_ << ob_.m_askPx[i].asDouble() << " x " << ob_.m_askQty[i]; 
             oss_ << std::endl;
         }
         return oss_; 
@@ -133,7 +133,7 @@ public:
         i = 0;
         for(auto it = askBook.begin(); it != askBook.end() && i < OrderBook::MAX_LEVELS; ++it, ++i ) {
             ob.m_askPx[i] = it->first;
-            ob.m_askSz[i] = it->second;
+            ob.m_askQty[i] = it->second;
         }
         ob.m_numAsks = i;
         return ob;

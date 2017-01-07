@@ -1,27 +1,30 @@
 #pragma once
 
+#include <mutex>
+
+namespace kalki {
+
+// Takes a container and adds a mutex to it and wraps a protective interface around it to make it thread safe
 template<typename Container>
 class Safe {
 public:
-	class Lock {
-	public:
-		~Lock() { }
-		Lock(Lock&& rhs_) : m_lock(std::move(rhs_.m_lock)), m_container(rhs_.m_container) {	}
-		Container* operator->() { return &m_container; }
-	private:
-		friend class Safe; // use Safe::getLock() to create an instance
-		Lock(Safe& safe_) : m_lock(safe_.m_mutex), m_container(safe_.m_container) { }
-		
-        unique_lock<mutex> m_lock;
-		Container& m_container;
-	};
-	Lock getLock() {
-		return Lock(*this);
-	}
+	template<typename... Args>
+	Safe(Args ... args) : m_container(args...) { }
+    class Lock {
+    public:
+        ~Lock() { m_safe.m_mutex.unlock(); }   
+        Container* operator->() { return &m_safe.m_container; }
+    private:
+        friend class Safe; // So only Safe can access my pvt ctor
+        Lock(Safe& safe_) : m_safe(safe_) { m_safe.m_mutex.lock(); } // pvt ctor. Use Safe::getLock() to create instance
+        Safe& m_safe;
+    };  
+    Lock getLock() { return Lock(*this); }   
 private:
-	friend class Lock; 
-	std::mutex m_mutex;
-	Container m_container;
+    friend class Lock; 
+    friend class TestInspect;
+    std::mutex m_mutex;
+    Container m_container;
 };
 
 // to create a SafeContainer on the heap
@@ -29,3 +32,4 @@ template<typename Container>
 std::unique_ptr<Safe<Container>> makeSafe() {
 	return std::unique_ptr<Safe<Container>>(new Safe<Container>());
 } 
+} // namespace

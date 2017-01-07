@@ -7,7 +7,7 @@ link_directories(/usr/local/lib)
 
 #BOOST libs
 #set(libs_boost boost_chrono boost_system boost_program_options boost_unit_test_framework boost_regex)	
-set(libs_boost boost_unit_test_framework)	
+set(libs_boost boost_unit_test_framework boost_iostreams)	
 
 set(libs_others pthread)
 

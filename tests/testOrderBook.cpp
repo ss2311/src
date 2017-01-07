@@ -80,9 +80,9 @@ BOOST_AUTO_TEST_CASE(test_ob_basic)
     BOOST_CHECK_EQUAL(ob.m_bidQty[9], 10);
   
     BOOST_CHECK_EQUAL(ob.m_askPx[0], Price(46.01));
-    BOOST_CHECK_EQUAL(ob.m_askSz[0], 40);
+    BOOST_CHECK_EQUAL(ob.m_askQty[0], 40);
     BOOST_CHECK_EQUAL(ob.m_askPx[4], Price(46.81));
-    BOOST_CHECK_EQUAL(ob.m_askSz[4], 10);
+    BOOST_CHECK_EQUAL(ob.m_askQty[4], 10);
 }
 
 BOOST_AUTO_TEST_CASE(test_ob_add_del)

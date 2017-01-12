@@ -4,6 +4,7 @@
 #include <logger/logger.h>
 #include <strategy/strategy.h>
 #include <strategy/stratController.h>
+#include <feeds/orderbookMgr.h>
 
 using namespace std;
 using namespace logger;
@@ -18,10 +19,16 @@ int main(int argc, char* argv[]) {
     }
     cout << "Reading config from " << argv[1] << endl;
     Config cfg(argv[1]);
-    string logfile = cfg.getValue("Logfile","");
+    string logfile = cfg.getValue("LogFile","");
     Logger<> log;
     log.getSink().setFile(logfile);    
     cout << "Logger started ..." << endl;
     log.logINFO("Started ...");
+    auto syms = cfg.getVector<string>("Instruments");
+    OrderBookMgr bookMgr;
+    for(unsigned i = 0; i < syms.size(); ++i) {
+        log.logINFO("Created order book for sym: " << syms[i]);
+        bookMgr.createBook(i);
+    }
     return EXIT_SUCCESS;
 }

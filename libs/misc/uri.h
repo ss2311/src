@@ -6,7 +6,10 @@
 #include <misc/exception.h>
 #include <misc/utils.h> // split2
 
+// Uniform Resource Identifier
+
 namespace kalki {
+
 struct Uri {
     // Refer https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Syntax
     // scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]

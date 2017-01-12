@@ -19,7 +19,7 @@ inline constexpr T power(T num_, unsigned exp_)
 class Instrument {
 public:
     using Id = uint32_t;
-    static const Id INVALID_ID = 0;
+    static const Id UNKNOWN = 0;
 private:
     Id m_id;
     const char* m_name; 
@@ -84,12 +84,18 @@ struct OrderBook {
         oss_ << std::fixed;
         oss_.precision(Price::PRECISION);
         for(unsigned i = 0; i < MAX_LEVELS; ++i) {
+            bool eol = false;
             //oss_ << i << " ";
-            if(i < ob_.m_numBids)
+            if(i < ob_.m_numBids ) {
                 oss_ << std::left << ob_.m_bidPx[i].asDouble() << " x " << std::setw(10) << ob_.m_bidQty[i]; 
-            if(i < ob_.m_numAsks)
+                eol = true;
+            }
+            if(i < ob_.m_numAsks) {
                 oss_ << ob_.m_askPx[i].asDouble() << " x " << ob_.m_askQty[i]; 
-            oss_ << std::endl;
+                eol = true;
+            }
+            if(eol)
+                oss_ << std::endl;
         }
         return oss_; 
     } 

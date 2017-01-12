@@ -28,8 +28,8 @@ private:
 };
 
 // to create a SafeContainer on the heap
-template<typename Container>
-std::unique_ptr<Safe<Container>> makeSafe() {
-	return std::unique_ptr<Safe<Container>>(new Safe<Container>());
+template<typename Container, typename... Args>
+std::unique_ptr<Safe<Container>> makeSafe(Args... args) {
+	return std::unique_ptr<Safe<Container>>(new Safe<Container>(args...));
 } 
 } // namespace

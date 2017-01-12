@@ -28,6 +28,19 @@ BOOST_AUTO_TEST_CASE(test_cfg_basics)
     BOOST_CHECK_EQUAL(cfg.size(),4);
 }
 
+BOOST_AUTO_TEST_CASE(test_cfg_vector)
+{
+	stringstream ss;
+	ss << "f1 = v1 v2 v3" << endl;
+	Config cfg;
+	cfg.readFile(ss);
+    auto vec = cfg.getVector<string>("f1");
+    BOOST_CHECK_EQUAL(vec.size(),3);
+    BOOST_CHECK_EQUAL(vec[0], "v1");
+    BOOST_CHECK_EQUAL(vec[1], "v2");
+    BOOST_CHECK_EQUAL(vec[2], "v3");
+}
+
 BOOST_AUTO_TEST_CASE(test_cfg_file)
 {
 	ofstream fs("currencypairs.cfg", ofstream::trunc);

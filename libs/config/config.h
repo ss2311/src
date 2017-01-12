@@ -88,15 +88,15 @@ struct Config : public std::unordered_map<std::string, std::string>
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    std::vector<std::string> getVector(const std::string& key_)
+    template<typename T>
+    std::vector<T> getVector(const std::string& key_)
     {
         std::istringstream iss(getValue(key_,std::string()));
         std::string str;
-        std::vector<std::string> vec;
-        while(iss)
+        std::vector<T> vec;
+        while(iss >> str)
         {
-            iss >> str;
-            vec.push_back(str);
+            vec.push_back(boost::lexical_cast<T>(str));
         }
         return vec;
     }
